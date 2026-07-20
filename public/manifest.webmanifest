@@ -1,0 +1,12 @@
+{
+  "name": "The Spine",
+  "short_name": "The Spine",
+  "description": "The operating system for human value. Ask any AI, create anything.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#12100E",
+  "theme_color": "#12100E",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
