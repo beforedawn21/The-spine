@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "api/chat.js": { "maxDuration": 180 },
+    "api/image.js": { "maxDuration": 60 },
+    "api/video.js": { "maxDuration": 60 },
+    "api/search.js": { "maxDuration": 30 },
+    "api/music.js": { "maxDuration": 60 },
+    "api/dub.js": { "maxDuration": 60 },
+    "api/transcribe.js": { "maxDuration": 60 },
+    "api/readurl.js": { "maxDuration": 30 },
+    "api/audiofx.js": { "maxDuration": 60 }
+  }
+}
