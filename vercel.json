@@ -1,0 +1,96 @@
+{
+  "functions": {
+    "api/chat.js": {
+      "maxDuration": 180
+    },
+    "api/image.js": {
+      "maxDuration": 120
+    },
+    "api/video.js": {
+      "maxDuration": 120
+    },
+    "api/search.js": {
+      "maxDuration": 45
+    },
+    "api/music.js": {
+      "maxDuration": 60
+    },
+    "api/dub.js": {
+      "maxDuration": 90
+    },
+    "api/transcribe.js": {
+      "maxDuration": 90
+    },
+    "api/readurl.js": {
+      "maxDuration": 45
+    },
+    "api/audiofx.js": {
+      "maxDuration": 90
+    },
+    "api/gemini.js": {
+      "maxDuration": 120
+    },
+    "api/email.js": {
+      "maxDuration": 30
+    },
+    "api/messages.js": {
+      "maxDuration": 20
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)\\.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(favicon|apple-touch-icon|icon-maskable|spine-mark|spine-mark-light|og-image)\\.(svg|png)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/(three|three-addons|cannon|phaser)(\\.min)?\\.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}
