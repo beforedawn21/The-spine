@@ -1,0 +1,19 @@
+The Spine - free packs used by games and worlds
+
+characters.glb
+  KayKit Adventurers Character Pack 1.0 and KayKit Skeletons Character Pack 1.0
+  by Kay Lousberg (www.kaylousberg.com) - Creative Commons Zero (CC0)
+  https://github.com/KayKit-Game-Assets
+  Repacked for the web: 9 characters, 29 shared animations, smaller textures.
+
+sounds.mp3
+  Sound effects from Kenney's Starter Kit FPS and Starter Kit 3D Platformer
+  by Kenney (www.kenney.nl) - Creative Commons Zero (CC0)
+  https://github.com/KenneyNL
+
+CC0 means free to use for anything, commercial included, with no attribution required.
+They are credited here anyway, with thanks.
+
+sprites2d.png
+  2D sprites (gem, grass, spikes, sparkle, coin, particle, hit, crosshair, shadow, hands, burst, background)
+  from Kenney's Starter Kit Match-3, FPS and 3D Platformer by Kenney (www.kenney.nl) - Creative Commons Zero (CC0)
