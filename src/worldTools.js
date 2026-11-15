@@ -95,6 +95,12 @@
       dv.setFloat32(o,nx/l,true); dv.setFloat32(o+4,ny/l,true); dv.setFloat32(o+8,nz/l,true); [A,B,C].forEach(function(V,vi){ dv.setFloat32(o+12+vi*12,V[0],true); dv.setFloat32(o+16+vi*12,V[1],true); dv.setFloat32(o+20+vi*12,V[2],true); }); dv.setUint16(o+48,0,true); }
     return {bytes:buf,triangles:N}; };
   function send(name,type,buf){ try{ if(window.Spine&&window.Spine.export){ var u8=new Uint8Array(buf), s="", CH=0x8000; for(var i=0;i<u8.length;i+=CH) s+=String.fromCharCode.apply(null,u8.subarray(i,i+CH)); return window.Spine.export({name:name,type:type,base64:btoa(s)}); } }catch(e){} return Promise.resolve(null); }
+  // batch 16: the whole world (or one object) in the 3D viewer with "See it in your room"; and molecules
+  W.room=function(obj){ return window.Spine&&window.Spine.room?window.Spine.room(obj||W.scene,String(document.title||"My world").slice(0,40)).then(function(r){ if(r&&r.error) return W.download("usdz"); return r; }):W.download("usdz"); };
+  W.molecule=function(q){ return window.Spine&&window.Spine.molecule?window.Spine.molecule(q):Promise.resolve(null); };
+  // batch 16: hand the model straight to the free Kiri:Moto slicer in a new tab
+  W.print3d=function(){ try{ var r=W.stl(); var u8=new Uint8Array(r.bytes), s="", CH=0x8000; for(var i=0;i<u8.length;i+=CH) s+=String.fromCharCode.apply(null,u8.subarray(i,i+CH));
+      return window.Spine&&window.Spine.act?window.Spine.act("slice",{base64:btoa(s),name:String(document.title||"spine-world").slice(0,40)}):Promise.resolve(null); }catch(e){ return Promise.resolve(null); } };
   W.download=function(fmt){ var name=String(document.title||"spine-world").replace(/[^\w\- ]/g,"").slice(0,40)||"spine-world";
     if(fmt==="stl"){ var r=W.stl(); return send(name+".stl","model/stl",r.bytes); }
     if(fmt==="usdz"){ return window.Spine&&window.Spine.ar?window.Spine.ar(W.scene):Promise.resolve(null); }
@@ -210,6 +216,8 @@
     if(F.sendT<=0){ F.sendT=0.12; var p=W.camera.getWorldPosition(new (T().Vector3)()), e=new (T().Euler)().setFromQuaternion(W.camera.getWorldQuaternion(new (T().Quaternion)()),"YXZ"); F.room.send({t:"pos",id:F.me.id,name:F.me.name,x:+p.x.toFixed(2),y:+p.y.toFixed(2),z:+p.z.toFixed(2),yaw:+e.y.toFixed(2)}); }
     var now=Date.now(); Object.keys(F.others).forEach(function(k){ var o=F.others[k]; if(now-o.seen>20000){ W.scene.remove(o.fig); delete F.others[k]; F.bar(); return; } if(o.to){ o.fig.position.lerp(o.to,Math.min(1,dt*8)); o.fig.rotation.y+=(o.yaw-o.fig.rotation.y)*Math.min(1,dt*8); } }); };
   W.onFrame&&W.onFrame(function(t,dt){ try{ W.friends.tick(dt||0.016); }catch(e){} });
+  // opened from a 'Visit with a friend' link: join that room straight away
+  if(window.SPINE_ROOM&&/^[A-Z]{4}$/.test(String(window.SPINE_ROOM))) setTimeout(function(){ try{ if(!W.friends.on) W.friends.start(String(window.SPINE_ROOM),String(window.SPINE_GUEST||"Friend").slice(0,20)); }catch(e){} },1200);
   W.friends.menu=function(){ var code=Math.random().toString(36).slice(2,6).toUpperCase().replace(/[^A-Z]/g,"K");
     var p=panel("Visit with friends","<p>Your friends open this same world on their own phone, tap More, then Visit with friends, and type your code. You will see each other walking around, and a guided lesson you start moves everyone.</p><div class='wt-row'><input data-n placeholder='Your name' maxlength=14 style='flex:1;min-height:40px;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.3);color:#fff;padding:0 10px'></div><div class='wt-row'><button class='pri' data-h>Start a room - code "+code+"</button></div><div class='wt-row'><input data-c maxlength=4 placeholder='Friend’s code' style='flex:1;min-height:40px;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.3);color:#fff;padding:0 10px;text-transform:uppercase'><button data-j>Join</button></div>");
     var nm=function(){ return String(p.querySelector("[data-n]").value||"").trim()||"Friend"; };
@@ -287,6 +295,9 @@
     var h2=document.createElement("h4"); h2.textContent="Take it with you"; sh.insertBefore(h2,close);
     add("⬇","Download the 3D model","GLB · any 3D app",function(){ W.download("glb"); });
     add("⬇","Download for a 3D printer","STL · millimetres",function(){ W.download("stl"); });
+    add("▦","Slice it for a 3D printer","Opens the free Kiri:Moto slicer",function(){ W.print3d(); });
+    add("◎","See it in your room","Any phone - AR on iPhone and Android",function(){ W.room(); });
+    add("⚛","Look at a molecule in 3D","A chemical or protein, from PubChem / PDB",function(){ var q=window.prompt("Which molecule? (e.g. caffeine, aspirin, haemoglobin)"); if(q&&window.Spine&&window.Spine.molecule) window.Spine.molecule(q); });
     add("◎","View in your room on iPhone","AR Quick Look",function(){ W.download("usdz"); });
   };
 })();
