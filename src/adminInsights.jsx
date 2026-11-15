@@ -25,6 +25,14 @@ export function AdminInsights() {
   const newOnes = list.filter((r) => r.total >= 3 && r.prev === 0).slice(0, 6);
   const falling = list.filter((r) => r.prev >= 5 && change(r.total, r.prev) <= -30).sort((a, b) => change(a.total, a.prev) - change(b.total, b.prev)).slice(0, 6);
   const quiet = list.filter((r) => !r.click && r.total <= 2).sort((a, b) => a.total - b.total).slice(0, 8);
+  // Use with no signal, and Spine products used after being downloaded (batch 15).
+  const away = useMemo(() => {
+    const a = list.filter((r) => /^(Offline|Downloaded) · /.test(r.event) && r.total > 0);
+    const sum = (f) => a.filter(f).reduce((x, r) => x + r.total, 0);
+    return { total: sum(() => true), offline: sum((r) => /^Offline · /.test(r.event)),
+             opened: sum((r) => /Downloaded.* opened$/i.test(r.event)), used: sum((r) => /Downloaded.* used$/i.test(r.event)),
+             top: a.slice().sort((x, y) => y.total - x.total).slice(0, 8) };
+  }, [list]);
   const peopleNow = daily.slice(-days).reduce((a, d) => Math.max(a, +d.people), 0);
   const dmax = Math.max(1, ...daily.map((d) => +d.events));
   const csv = () => {
@@ -50,6 +58,18 @@ export function AdminInsights() {
           <div><b>{peopleNow.toLocaleString()}</b><span>people on the busiest day</span></div>
           <div><b>{areas[0] ? areas[0][0] : "-"}</b><span>busiest area</span></div>
         </div>
+        {away.total > 0 && (
+          <div className="ai-block ai-away">
+            <div className="ai-h">Used offline or as a download</div>
+            <div className="ai-stats">
+              <div><b>{away.offline.toLocaleString()}</b><span>actions with no signal</span></div>
+              <div><b>{away.opened.toLocaleString()}</b><span>downloaded products opened</span></div>
+              <div><b>{away.used.toLocaleString()}</b><span>downloaded products used</span></div>
+            </div>
+            {away.top.map((r) => <div key={r.event} className="ai-li"><span>{r.event.replace(/^Offline · /, "").replace(/^Downloaded · /, "Downloaded ")} <small>{/^Offline/.test(r.event) ? "offline" : "online"}</small></span><b>{r.total.toLocaleString()}</b></div>)}
+            <div className="bs-sub">Counted on the phone while it had no signal, and sent when it was back. Only what kind of thing was used - never who, or what was in it.</div>
+          </div>
+        )}
         {daily.length > 1 && <div className="ai-days" aria-label="Activity per day">{daily.map((d) => <i key={d.day} title={new Date(d.day).toLocaleDateString() + ": " + d.events + " actions, " + d.people + " people"} style={{ height: Math.max(2, (+d.events / dmax) * 56) + "px" }} />)}</div>}
         {areas.length > 0 && <div className="ai-block"><div className="ai-h">By area</div>{areas.map(([a, n]) => <div key={a} className="ai-bar"><span className="ai-name">{a}</span><span className="ai-track"><i style={{ width: (n / areas[0][1]) * 100 + "%" }} /></span><b>{n.toLocaleString()}</b></div>)}</div>}
         <div className="ai-block">
